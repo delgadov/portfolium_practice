@@ -14,10 +14,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\Application\" />
-    <Folder Include="src\Core\" />
-    <Folder Include="src\Infrastructure\" />
-    <Folder Include="src\Web\" />
+    <Folder Include="src\Application\DTOs\" />
+    <Folder Include="src\Application\Mappers\" />
+    <Folder Include="src\Application\Services\" />
+    <Folder Include="src\Application\Validators\" />
+    <Folder Include="src\Core\Entities\" />
+    <Folder Include="src\Core\Errors\" />
+    <Folder Include="src\Core\Interfaces\" />
+    <Folder Include="src\Infrastructure\Data\" />
+    <Folder Include="src\Infrastructure\Middleware\" />
+    <Folder Include="src\Infrastructure\Repositories\" />
+    <Folder Include="src\Web\Controllers\" />
+    <Folder Include="src\Web\Filters\" />
     <Folder Include="tests\" />
   </ItemGroup>
 
