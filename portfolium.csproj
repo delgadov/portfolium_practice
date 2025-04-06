@@ -1,32 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="src\Application\DTOs\" />
-    <Folder Include="src\Application\Mappers\" />
-    <Folder Include="src\Application\Services\" />
-    <Folder Include="src\Application\Validators\" />
-    <Folder Include="src\Core\Entities\" />
-    <Folder Include="src\Core\Errors\" />
-    <Folder Include="src\Core\Interfaces\" />
-    <Folder Include="src\Infrastructure\Data\" />
-    <Folder Include="src\Infrastructure\Middleware\" />
-    <Folder Include="src\Infrastructure\Repositories\" />
-    <Folder Include="src\Web\Controllers\" />
-    <Folder Include="src\Web\Filters\" />
-    <Folder Include="tests\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="src\Application\DTOs\"/>
+        <Folder Include="src\Application\Mappers\"/>
+        <Folder Include="src\Application\Services\"/>
+        <Folder Include="src\Application\Validators\"/>
+        <Folder Include="src\Core\Errors\"/>
+        <Folder Include="src\Core\Interfaces\"/>
+        <Folder Include="src\Infrastructure\Middleware\"/>
+        <Folder Include="src\Infrastructure\Repositories\"/>
+        <Folder Include="src\Web\Controllers\"/>
+        <Folder Include="src\Web\Filters\"/>
+        <Folder Include="tests\"/>
+    </ItemGroup>
 
 </Project>
