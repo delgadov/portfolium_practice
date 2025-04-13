@@ -11,7 +11,7 @@ using portfolium.Infrastructure.Data;
 
 namespace portfolium.Migrations
 {
-    [DbContext(typeof(ApplicatioDBContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250406054806_InitialCreate")]
     partial class InitialCreate
     {

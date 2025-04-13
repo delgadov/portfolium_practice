@@ -7,6 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="11.11.0"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
             <PrivateAssets>all</PrivateAssets>
@@ -19,16 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="src\Application\DTOs\"/>
-        <Folder Include="src\Application\Mappers\"/>
-        <Folder Include="src\Application\Services\"/>
-        <Folder Include="src\Application\Validators\"/>
-        <Folder Include="src\Core\Errors\"/>
-        <Folder Include="src\Core\Interfaces\"/>
         <Folder Include="src\Infrastructure\Middleware\"/>
-        <Folder Include="src\Infrastructure\Repositories\"/>
-        <Folder Include="src\Web\Controllers\"/>
-        <Folder Include="src\Web\Filters\"/>
         <Folder Include="tests\"/>
     </ItemGroup>
 
