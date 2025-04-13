@@ -7,4 +7,5 @@ public interface IStockMapper {
     StockResponseDto FromStock(Stock stock);
     List<StockResponseDto> FromStocks(List<Stock> stocks);
     Stock FromRequestToStock(StockRequestDto stockRequest);
+    Stock UpdateFromDto(Stock stock, StockUpdateRequestDto stockUpdateRequest);
 }

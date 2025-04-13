@@ -23,13 +23,24 @@ public class StockRepository(ApplicationDbContext applicationDbContext) : IStock
                      .ToListAsync(ct);
     }
 
+    public async Task<Stock?> GetByIdAsync(Guid id) {
+        return await applicationDbContext.Stock
+                                         .FirstOrDefaultAsync(s => s.StockId == id);
+    }
+
     public async Task<Stock?> GetBySymbolAsync(string symbol) {
         return await applicationDbContext.Stock
                                          .FirstOrDefaultAsync(s => s.Symbol == symbol);
     }
 
     public async Task<Stock> AddAsync(Stock stock, CancellationToken ct) {
-        await applicationDbContext.Stock.AddAsync(stock);
+        await applicationDbContext.Stock.AddAsync(stock, ct);
+        await applicationDbContext.SaveChangesAsync(ct);
+        return stock;
+    }
+
+    public async Task<Stock> UpdateAsync(Stock stock, CancellationToken ct) {
+        applicationDbContext.Stock.Update(stock);
         await applicationDbContext.SaveChangesAsync(ct);
         return stock;
     }

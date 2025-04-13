@@ -4,24 +4,24 @@ using portfolium.Application.Enums;
 
 namespace portfolium.Application.Validators;
 
-public class StockRequestDtoValidator : AbstractValidator<StockRequestDto> {
-    public StockRequestDtoValidator() {
+public class StockUpdateRequestDtoValidator : AbstractValidator<StockUpdateRequestDto> {
+    public StockUpdateRequestDtoValidator() {
         RuleFor(s => s.Symbol)
-            .NotEmpty().WithMessage("Symbol is required")
             .MaximumLength(5).WithMessage("Symbol cannot exceed 5 characters");
 
         RuleFor(s => s.CompanyName)
-            .NotEmpty().WithMessage("CompanyName is required")
             .MaximumLength(30).WithMessage("CompanyName cannot exceed 30 characters");
 
         RuleFor(s => s.CurrentPrice)
-            .GreaterThan(0).WithMessage("CurrentPrice must be greater than 0")
+            .GreaterThan(0)
+            .WithMessage("CurrentPrice must be greater than 0")
             .LessThanOrEqualTo(decimal.MaxValue).WithMessage("CurrentPrice exceeds maximum allowed value");
 
         RuleFor(s => s.Industry)
-            .Must(type => Enum.IsDefined(typeof(IndustryType), type))
+            .Must(type => !type.HasValue || Enum.IsDefined(typeof(IndustryType), type.Value))
             .WithMessage("Invalid IndustryType provided");
 
         RuleFor(s => s.MarketCap)
-            .GreaterThan(0).WithMessage("MarketCap must be greater than 0");    }
+            .GreaterThan(0).WithMessage("MarketCap must be greater than 0");
+    }
 }

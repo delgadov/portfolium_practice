@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Mvc;
 using portfolium.Application.DTOs;
 using portfolium.Core.Common;
 using portfolium.Core.Interfaces;
@@ -27,6 +28,15 @@ public class StockController(IStockService stockService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddStock([FromBody] StockRequestDto requestDto, CancellationToken ct) {
         var result = await stockService.AddStock(requestDto, ct);
+        return HandleResult(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(Result<StockResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateStock(Guid id, [FromBody] StockUpdateRequestDto stockUpdateRequest, CancellationToken ct) {
+        var result = await stockService.UpdateStock(id, stockUpdateRequest, ct);
         return HandleResult(result);
     }
 
