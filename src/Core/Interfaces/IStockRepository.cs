@@ -9,4 +9,5 @@ public interface IStockRepository {
     Task<Stock?> GetBySymbolAsync(string symbol);
     Task<Stock?> AddAsync(Stock? stock, CancellationToken ct);
     Task<Stock> UpdateAsync(Stock stock, CancellationToken ct);
+    Task DeleteAsync(Stock stock, CancellationToken ct);
 }

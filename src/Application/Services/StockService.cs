@@ -28,8 +28,6 @@ public class StockService(IStockRepository stockRepository, IStockMapper stockMa
     public async Task<Result<StockResponseDto>> UpdateStock(Guid id,
                                                             StockUpdateRequestDto stockUpdateRequest,
                                                             CancellationToken ct) {
-        if (stockUpdateRequest is null) return Result<StockResponseDto>.Fail(new NullRequestError());
-
         var stock = await stockRepository.GetByIdAsync(id);
         if (stock == null) return Result<StockResponseDto>.Fail(new StockDoesNotExistError(id));
 
@@ -45,5 +43,14 @@ public class StockService(IStockRepository stockRepository, IStockMapper stockMa
 
         var mapped = stockMapper.FromStock(stock);
         return Result<StockResponseDto>.Success(mapped);
+    }
+
+    public async Task<Result<bool>> DeleteStock(Guid id, CancellationToken ct) {
+        var stock = await stockRepository.GetByIdAsync(id);
+        if (stock == null) return Result<bool>.Fail(new StockDoesNotExistError(id));
+
+        await stockRepository.DeleteAsync(stock, ct);
+
+        return Result<bool>.Success(true);
     }
 }

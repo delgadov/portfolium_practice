@@ -44,4 +44,9 @@ public class StockRepository(ApplicationDbContext applicationDbContext) : IStock
         await applicationDbContext.SaveChangesAsync(ct);
         return stock;
     }
+
+    public async Task DeleteAsync(Stock stock, CancellationToken ct) {
+        applicationDbContext.Stock.Remove(stock);
+        await applicationDbContext.SaveChangesAsync(ct);
+    }
 }
