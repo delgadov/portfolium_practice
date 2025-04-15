@@ -1,5 +1,7 @@
-﻿using portfolium.Application.DTOs;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using portfolium.Application.DTOs;
 using portfolium.Application.Interfaces;
+using portfolium.Application.Validators;
 using portfolium.Core.Common;
 using portfolium.Core.Errors;
 using portfolium.Core.Interfaces;
@@ -39,6 +41,32 @@ public class StockService(IStockRepository stockRepository, IStockMapper stockMa
                 return Result<StockResponseDto>.Fail(new StockAlreadyExistError(stockUpdateRequest.Symbol));
         }
 
+        await stockRepository.UpdateAsync(stock, ct);
+
+        var mapped = stockMapper.FromStock(stock);
+        return Result<StockResponseDto>.Success(mapped);
+    }
+
+    public async Task<Result<StockResponseDto>> PatchStock(
+        Guid id, JsonPatchDocument<StockPatchRequestDto> jsonPatchDocument, CancellationToken ct) {
+        var stock = await stockRepository.GetByIdAsync(id);
+        if (stock == null) return Result<StockResponseDto>.Fail(new StockDoesNotExistError(id));
+
+        var stockPatch = stockMapper.FromStockToPatch(stock);
+        jsonPatchDocument.ApplyTo(stockPatch);
+
+        var validationResult = await new StockPatchRequestDtoValidator().ValidateAsync(stockPatch, ct);
+        if (!validationResult.IsValid) {
+            return Result<StockResponseDto>.Fail(new ValidationError(validationResult.Errors.Select(x => x.ErrorMessage).ToList()));
+        }
+
+        if (stock.Symbol != stockPatch.Symbol) {
+            var existingStock = await stockRepository.GetBySymbolAsync(stockPatch.Symbol);
+            if  (existingStock != null && existingStock.StockId != id)
+                return Result<StockResponseDto>.Fail(new StockAlreadyExistError(stockPatch.Symbol));
+        }
+
+        stockMapper.FromPatchToStock(stock, stockPatch);
         await stockRepository.UpdateAsync(stock, ct);
 
         var mapped = stockMapper.FromStock(stock);

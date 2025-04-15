@@ -2,4 +2,4 @@
 
 namespace portfolium.Application.DTOs;
 
-public record StockUpdateRequestDto(string? Symbol, string? CompanyName, decimal? CurrentPrice, IndustryType? Industry, long? MarketCap);
+public record StockUpdateRequestDto(string Symbol, string CompanyName, decimal CurrentPrice, IndustryType Industry, long MarketCap);

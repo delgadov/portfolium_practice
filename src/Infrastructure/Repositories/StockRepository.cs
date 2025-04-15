@@ -8,7 +8,7 @@ using portfolium.Web.Filters;
 namespace portfolium.Infrastructure.Repositories;
 
 public class StockRepository(ApplicationDbContext applicationDbContext) : IStockRepository {
-    public async Task<List<Stock?>> GetAllAsync(StockFilterRequest filter, CancellationToken ct) {
+    public async Task<List<Stock>> GetAllAsync(StockFilterRequest filter, CancellationToken ct) {
         var queryStock = applicationDbContext.Stock
                                              .AsNoTracking()
                                              .AsQueryable();
@@ -23,12 +23,12 @@ public class StockRepository(ApplicationDbContext applicationDbContext) : IStock
                      .ToListAsync(ct);
     }
 
-    public async Task<Stock?> GetByIdAsync(Guid id) {
+    public async Task<Stock> GetByIdAsync(Guid id) {
         return await applicationDbContext.Stock
                                          .FirstOrDefaultAsync(s => s.StockId == id);
     }
 
-    public async Task<Stock?> GetBySymbolAsync(string symbol) {
+    public async Task<Stock> GetBySymbolAsync(string symbol) {
         return await applicationDbContext.Stock
                                          .FirstOrDefaultAsync(s => s.Symbol == symbol);
     }

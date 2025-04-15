@@ -4,8 +4,8 @@ using portfolium.Application.Enums;
 
 namespace portfolium.Application.Validators;
 
-public class StockUpdateRequestDtoValidator : AbstractValidator<StockUpdateRequestDto> {
-    public StockUpdateRequestDtoValidator() {
+public class StockPatchRequestDtoValidator : AbstractValidator<StockPatchRequestDto> {
+    public StockPatchRequestDtoValidator() {
         RuleFor(s => s.Symbol)
             .MaximumLength(5).WithMessage("Symbol cannot exceed 5 characters");
 

@@ -8,4 +8,6 @@ public interface IStockMapper {
     List<StockResponseDto> FromStocks(List<Stock> stocks);
     Stock FromRequestToStock(StockRequestDto stockRequest);
     Stock UpdateFromDto(Stock stock, StockUpdateRequestDto stockUpdateRequest);
+    StockPatchRequestDto FromStockToPatch(Stock stock);
+    Stock FromPatchToStock(Stock stock, StockPatchRequestDto stockPatchRequest);
 }

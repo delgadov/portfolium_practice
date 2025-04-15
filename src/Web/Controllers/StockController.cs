@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using portfolium.Application.DTOs;
 using portfolium.Core.Common;
 using portfolium.Core.Interfaces;
@@ -10,7 +11,7 @@ namespace portfolium.Web.Controllers;
 [ApiController]
 public class StockController(IStockService stockService) : ControllerBase {
     [HttpGet]
-    [ResponseCache(Duration = 60)]
+    [ResponseCache(Duration = 1)]
     [ProducesResponseType(typeof(Result<List<StockResponseDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -34,10 +35,25 @@ public class StockController(IStockService stockService) : ControllerBase {
     [ProducesResponseType(typeof(Result<StockResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateStock(Guid id, [FromBody] StockUpdateRequestDto stockUpdateRequest,
                                                  CancellationToken ct) {
+        if (id == Guid.Empty) return BadRequest(new { error = "Invalid stock ID" });
         var result = await stockService.UpdateStock(id, stockUpdateRequest, ct);
+        return HandleResult(result, data => Ok(data));
+    }
+
+    [HttpPatch("{id:guid}")]
+    [ProducesResponseType(typeof(Result<StockResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> PatchStock(
+        Guid id, [FromBody] JsonPatchDocument<StockPatchRequestDto> patchDocument, CancellationToken ct) {
+        if (id == Guid.Empty) return BadRequest(new { error = "Invalid stock ID" });
+        var result = await stockService.PatchStock(id, patchDocument, ct);
         return HandleResult(result, data => Ok(data));
     }
 
@@ -47,6 +63,7 @@ public class StockController(IStockService stockService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteStock(Guid id, CancellationToken ct) {
+        if (id == Guid.Empty) return BadRequest(new { error = "Invalid stock ID" });
         var result = await stockService.DeleteStock(id, ct);
         return HandleResult(result, _ => NoContent());
     }

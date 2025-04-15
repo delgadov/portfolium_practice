@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using portfolium.Application.DTOs;
+﻿using portfolium.Application.DTOs;
 using portfolium.Application.Interfaces;
 using portfolium.Core.Entities;
 
@@ -38,23 +37,31 @@ public class StockMapper : IStockMapper {
     public Stock UpdateFromDto(Stock stock, StockUpdateRequestDto stockUpdateRequest) {
         if (stock == null || stockUpdateRequest == null) throw new ArgumentNullException(nameof(stock));
 
-        stock.Symbol = string.IsNullOrWhiteSpace(stockUpdateRequest.Symbol)
-            ? stock.Symbol
-            : stockUpdateRequest.Symbol;
+        stock.Symbol = stockUpdateRequest.Symbol;
+        stock.CompanyName = stockUpdateRequest.CompanyName;
+        stock.CurrentPrice = stockUpdateRequest.CurrentPrice;
+        stock.Industry = stockUpdateRequest.Industry;
+        stock.MarketCap = stockUpdateRequest.MarketCap;
 
-        stock.CompanyName = string.IsNullOrWhiteSpace(stockUpdateRequest.CompanyName)
-            ? stock.CompanyName
-            : stockUpdateRequest.CompanyName;
+        return stock;
+    }
 
-        if (stockUpdateRequest.CurrentPrice.HasValue)
-            stock.CurrentPrice = stockUpdateRequest.CurrentPrice.Value;
+    public StockPatchRequestDto FromStockToPatch(Stock stock) {
+        return new StockPatchRequestDto {
+            Symbol = stock.Symbol,
+            CompanyName = stock.CompanyName,
+            CurrentPrice = stock.CurrentPrice,
+            Industry = stock.Industry,
+            MarketCap = stock.MarketCap
+        };
+    }
 
-        if (stockUpdateRequest.Industry.HasValue)
-            stock.Industry = stockUpdateRequest.Industry.Value;
-
-        if (stockUpdateRequest.MarketCap.HasValue)
-            stock.MarketCap = stockUpdateRequest.MarketCap.Value;
-
+    public Stock FromPatchToStock(Stock stock, StockPatchRequestDto patchRequest) {
+        stock.Symbol = patchRequest.Symbol;
+        stock.CompanyName = patchRequest.CompanyName;
+        stock.CurrentPrice = patchRequest.CurrentPrice;
+        stock.Industry = patchRequest.Industry;
+        stock.MarketCap = patchRequest.MarketCap;
         return stock;
     }
 }
