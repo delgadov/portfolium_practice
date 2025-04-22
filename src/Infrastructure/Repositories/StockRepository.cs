@@ -33,10 +33,22 @@ public class StockRepository(ApplicationDbContext applicationDbContext) : IStock
                                          .FirstOrDefaultAsync(s => s.Symbol == symbol);
     }
 
+    public async Task<List<string>> GetAllSymbolsAsync() {
+        return await applicationDbContext.Stock
+                                         .Select(s => s.Symbol)
+                                         .ToListAsync();
+    }
+
     public async Task<Stock> AddAsync(Stock stock, CancellationToken ct) {
         await applicationDbContext.Stock.AddAsync(stock, ct);
         await applicationDbContext.SaveChangesAsync(ct);
         return stock;
+    }
+
+    public async Task<List<Stock>> AddBulkAsync(List<Stock> stockList, CancellationToken ct) {
+        await applicationDbContext.Stock.AddRangeAsync(stockList, ct);
+        await applicationDbContext.SaveChangesAsync(ct);
+        return stockList;
     }
 
     public async Task<Stock> UpdateAsync(Stock stock, CancellationToken ct) {

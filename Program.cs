@@ -2,11 +2,12 @@ using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using portfolium.Application.DTOs;
+using Microsoft.Extensions.Options;
 using portfolium.Application.Interfaces;
 using portfolium.Application.Mappers;
 using portfolium.Application.Services;
 using portfolium.Application.Validators;
+using portfolium.Core.Configuration;
 using portfolium.Core.Interfaces;
 using portfolium.Infrastructure.Data;
 using portfolium.Infrastructure.Repositories;
@@ -15,6 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<BulkSettings>(builder.Configuration.GetSection("BulkSettings"));
+builder.Services.AddSingleton<IBulkSettings>(sp =>
+    sp.GetRequiredService<IOptions<BulkSettings>>().Value
+);
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });

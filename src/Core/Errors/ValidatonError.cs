@@ -1,6 +1,6 @@
 ﻿namespace portfolium.Core.Errors;
 
-public record ValidationError : ErrorResponse
+public class ValidationError : ErrorResponse
 {
     public List<string> Errors { get; init; }
 

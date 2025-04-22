@@ -1,4 +1,4 @@
 ﻿namespace portfolium.Core.Errors;
 
-public record StockAlreadyExistError(string Message)
-    : ErrorResponse($"Stock '{Message}' already exist", StatusCodes.Status409Conflict);
+public class StockAlreadyExistError(params string[] stock)
+    : ErrorResponse(string.Join(", ", stock.Select(s => $"Stock '{s}' already exist")), StatusCodes.Status409Conflict);

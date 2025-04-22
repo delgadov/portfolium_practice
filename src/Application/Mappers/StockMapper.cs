@@ -1,6 +1,7 @@
 ﻿using portfolium.Application.DTOs;
 using portfolium.Application.Interfaces;
 using portfolium.Core.Entities;
+using portfolium.Core.Errors;
 
 namespace portfolium.Application.Mappers;
 
@@ -63,5 +64,24 @@ public class StockMapper : IStockMapper {
         stock.Industry = patchRequest.Industry;
         stock.MarketCap = patchRequest.MarketCap;
         return stock;
+    }
+
+    public List<Stock> FromListRequestToStock(List<StockRequestDto> stockRequestDtos) {
+        if (stockRequestDtos == null) throw new ArgumentNullException(nameof(stockRequestDtos));
+
+        return stockRequestDtos.Select(FromRequestToStock)
+                               .ToList();
+    }
+
+    public BulkStockResponseDto FromBulkRequestToBulkResponse(List<StockRequestDto> duplicatesRequests,
+                                                              List<StockRequestDto> existingInDb,
+                                                              List<Stock> successStock,
+                                                              List<ValidationFailures> validationFailuresList) {
+        return new BulkStockResponseDto {
+            SuccessStocks = FromStocks(successStock),
+            DuplicatesStocks = duplicatesRequests,
+            ExistingDbStocks = existingInDb,
+            ValidationFailures = validationFailuresList
+        };
     }
 }

@@ -28,7 +28,24 @@ public class StockController(IStockService stockService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddStock([FromBody] StockRequestDto requestDto, CancellationToken ct) {
         var result = await stockService.AddStock(requestDto, ct);
-        return HandleResult(result, data => CreatedAtAction(nameof(GetAll), new { id = data.Id }, data));
+        return HandleResult(result, result => CreatedAtAction(nameof(GetAll), new { id = result.Data.Id }, result));
+    }
+
+    [HttpPost("bulk")]
+    [ProducesResponseType(typeof(Result<BulkStockResponseDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Result<BulkStockResponseDto>), StatusCodes.Status206PartialContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddStockBulk([FromBody] BulkStockRequestDto bulkStockRequestDto,
+                                                  CancellationToken ct) {
+        var result = await stockService.AddStockBulk(bulkStockRequestDto.StockRequests, ct);
+        return HandleResult(result, result => {
+            var hasFailures = result.Data.ValidationFailures.Any()
+                              || result.Data.DuplicatesStocks.Any()
+                              || result.Data.ExistingDbStocks.Any();
+            return StatusCode(hasFailures ? StatusCodes.Status206PartialContent : StatusCodes.Status201Created, result);
+        });
     }
 
     [HttpPut("{id:guid}")]
@@ -68,9 +85,16 @@ public class StockController(IStockService stockService) : ControllerBase {
         return HandleResult(result, _ => NoContent());
     }
 
-    private IActionResult HandleResult<T>(Result<T> result, Func<T, IActionResult> onSuccess) {
-        return result.IsSuccess
-            ? onSuccess(result.Data)
-            : StatusCode(result.ErrorResponse.StatusCode, result.ErrorResponse);
+    private IActionResult HandleResult<T>(Result<T> result, Func<Result<T>, IActionResult> onSuccess) {
+        if (!result.IsSuccess) return StatusCode(result.ErrorResponse.StatusCode, result.ErrorResponse);
+
+        var actionResult = onSuccess(result);
+        result.StatusCode = actionResult switch {
+            ObjectResult objectResult => objectResult.StatusCode ?? 200,
+            StatusCodeResult statusCodeResult => statusCodeResult.StatusCode,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        return onSuccess(result);
     }
 }
