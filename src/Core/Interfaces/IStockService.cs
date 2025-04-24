@@ -12,4 +12,5 @@ public interface IStockService {
     Task<Result<StockResponseDto>> UpdateStock(Guid id, StockUpdateRequestDto stockUpdateRequest, CancellationToken ct);
     Task<Result<StockResponseDto>> PatchStock(Guid id, JsonPatchDocument<StockPatchRequestDto> jsonPatchDocument, CancellationToken ct);
     Task<Result<bool>> DeleteStock(Guid id, CancellationToken ct);
+    Task<Result<BulkDeleteStockResponseDto>> DeleteStockBulk(BulkDeleteStockRequestDto bulkDeleteStockRequestDto, CancellationToken ct);
 }

@@ -4,6 +4,7 @@ using portfolium.Application.Interfaces;
 using portfolium.Application.Validators;
 using portfolium.Core.Common;
 using portfolium.Core.Configuration;
+using portfolium.Core.Entities;
 using portfolium.Core.Errors;
 using portfolium.Core.Interfaces;
 using portfolium.Web.Filters;
@@ -72,9 +73,7 @@ public class StockService(IStockRepository stockRepository, IStockMapper stockMa
         var mapped =
             stockMapper.FromBulkRequestToBulkResponse(duplicatesRequestDtos, existingInDb, stockList,
                 validationErrorsList);
-        Console.WriteLine(duplicatesHash.Any());
-        Console.WriteLine(existingDbSymbolSet.Any());
-        Console.WriteLine(notValidSet.Any());
+
         return Result<BulkStockResponseDto>.Success(mapped,
             duplicatesHash.Any() || existingDbSymbolSet.Any() || notValidSet.Any()
                 ? "Some errors ware identified while adding the objects"
@@ -134,5 +133,24 @@ public class StockService(IStockRepository stockRepository, IStockMapper stockMa
         await stockRepository.DeleteAsync(stock, ct);
 
         return Result<bool>.Success(true);
+    }
+
+    public async Task<Result<BulkDeleteStockResponseDto>> DeleteStockBulk(BulkDeleteStockRequestDto bulkDeleteStockRequestDto, CancellationToken ct) {
+        if (bulkDeleteStockRequestDto.StockIds == null || bulkDeleteStockRequestDto.StockIds.Count == 0)
+            return Result<BulkDeleteStockResponseDto>.Fail(new EmptyListError());
+
+        var stockList = await stockRepository.GetStocksByIdAsync(bulkDeleteStockRequestDto.StockIds, ct);
+        if (stockList.Count == 0) return Result<BulkDeleteStockResponseDto>.Fail(new DatabaseError("I couldn't find any given stock"));
+
+        var foundIds =  new HashSet<Guid>(stockList.Select(x => x.StockId));
+        var notFoundIds = bulkDeleteStockRequestDto.StockIds.Except(foundIds).ToList();
+        await stockRepository.DeleteBulkAsync(stockList, ct);
+        var mapped = stockMapper.FromStockBulkDeleteToBulkResponse(foundIds.ToList(), notFoundIds);
+
+        return Result<BulkDeleteStockResponseDto>.Success(mapped, foundIds.Count switch {
+            > 0 when notFoundIds.Count > 0 => "Some objects were deleted some may not",
+            0 when notFoundIds.Count > 0 => "Some errors were found while deleting the objects",
+            _ => "Success"
+        });
     }
 }

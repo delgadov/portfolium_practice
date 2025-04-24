@@ -85,6 +85,20 @@ public class StockController(IStockService stockService) : ControllerBase {
         return HandleResult(result, _ => NoContent());
     }
 
+
+    [HttpDelete("bulk")]
+    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status206PartialContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteStockBulk([FromBody] BulkDeleteStockRequestDto bulkDeleteStockRequestDto,
+                                                     CancellationToken ct) {
+        var result = await stockService.DeleteStockBulk(bulkDeleteStockRequestDto, ct);
+        return HandleResult(result, result => {
+            var hasFailures = result.Data.NotFound.Count > 0;
+            return hasFailures ? StatusCode(StatusCodes.Status206PartialContent, result) : Ok(result);
+        });
+    }
+
     private IActionResult HandleResult<T>(Result<T> result, Func<Result<T>, IActionResult> onSuccess) {
         if (!result.IsSuccess) return StatusCode(result.ErrorResponse.StatusCode, result.ErrorResponse);
 

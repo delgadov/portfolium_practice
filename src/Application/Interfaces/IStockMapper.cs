@@ -16,4 +16,6 @@ public interface IStockMapper {
                                                        List<StockRequestDto> existingInDb,
                                                        List<Stock> successStock,
                                                        List<ValidationFailures> validationFailuresList);
+
+    BulkDeleteStockResponseDto FromStockBulkDeleteToBulkResponse(List<Guid> foundIds, List<Guid> notFoundIds);
 }

@@ -84,4 +84,11 @@ public class StockMapper : IStockMapper {
             ValidationFailures = validationFailuresList
         };
     }
+
+    public BulkDeleteStockResponseDto FromStockBulkDeleteToBulkResponse(List<Guid> foundIds, List<Guid> notFoundIds) {
+        return new BulkDeleteStockResponseDto {
+            DeletedStockIds = foundIds,
+            NotFound = notFoundIds,
+        };
+    }
 }
